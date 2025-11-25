@@ -1,0 +1,356 @@
+:root {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: #0f172a;
+  background: #eef2ff;
+}
+
+body {
+  margin: 0;
+  padding: 12px;
+  background: radial-gradient(circle at 10% 20%, #e0f2fe 0, transparent 35%),
+    radial-gradient(circle at 90% 0%, #e2e8f0 0, transparent 30%),
+    #f8fafc;
+}
+
+#app.panel {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px rgba(15, 23, 42, 0.12);
+  padding: 16px 18px;
+  width: 500px;
+  min-width: 380px;
+  max-width: 560px;
+  min-height: 420px;
+  resize: both;
+  overflow: auto;
+  box-sizing: border-box;
+}
+
+header {
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+h1 {
+  font-size: 20px;
+  margin: 0 0 2px;
+}
+
+p {
+  margin: 4px 0 0;
+  color: #475569;
+  font-size: 13px;
+}
+
+.hint {
+  margin: 4px 0 0;
+  color: #475569;
+  font-size: 12px;
+}
+
+.tabs {
+  display: inline-flex;
+  gap: 8px;
+  margin: 8px 0 12px;
+}
+
+.tab {
+  border: 1px solid #cbd5e1;
+  background: #fff;
+  color: #0f172a;
+  padding: 8px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.tab.active {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+}
+
+.tab-panel[hidden] {
+  display: none;
+}
+
+body[data-tab="rules"] #rules-panel { display: block; }
+body[data-tab="rules"] #timers-panel,
+body[data-tab="rules"] #settings-panel { display: none; }
+
+body[data-tab="timers"] #timers-panel { display: block; }
+body[data-tab="timers"] #rules-panel,
+body[data-tab="timers"] #settings-panel { display: none; }
+
+body[data-tab="settings"] #settings-panel { display: block; }
+body[data-tab="settings"] #rules-panel,
+body[data-tab="settings"] #timers-panel { display: none; }
+
+form {
+  display: grid;
+  gap: 8px;
+  margin: 12px 0;
+  padding-bottom: 4px;
+  max-width: 520px;
+  width: 100%;
+  padding-right: 20px;
+  padding-left: 3px;
+  box-sizing: border-box;
+}
+
+label {
+  display: grid;
+  gap: 4px;
+  font-size: 13px;
+  color: #0f172a;
+}
+
+input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #cbd5e1;
+  border-radius: 6px;
+  font-size: 13px;
+  background: #fff;
+}
+
+button {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#rule-form > button[type="submit"] {
+  width: 25%;
+  min-width: 140px;
+  align-self: flex-start;
+}
+
+button:hover {
+  background: #1d4ed8;
+}
+
+#rules-section {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 10px;
+}
+
+#timers-section {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 10px;
+}
+
+#timers-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
+
+.timer {
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: #f8fafc;
+  display: grid;
+  gap: 4px;
+}
+
+.timer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  color: #0f172a;
+}
+
+.timer small {
+  color: #475569;
+  font-size: 12px;
+}
+
+.badge {
+  background: #dbeafe;
+  color: #1d4ed8;
+  border-radius: 12px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.badge.active {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+#settings-section {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 10px;
+  display: grid;
+  gap: 12px;
+  padding-left: 3px;
+  padding-right: 20px;
+}
+
+.settings-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.settings-grid input {
+  padding: 10px;
+}
+
+.settings-actions {
+  margin-top: 8px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.shortcut-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 6px;
+}
+
+.logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+#rules-section h2 {
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+
+#rules-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.rule {
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 10px;
+  display: grid;
+  gap: 6px;
+  max-width: 520px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.rule-row-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.rule button {
+  background: #e2e8f0;
+  color: #0f172a;
+  padding: 8px;
+  font-size: 12px;
+}
+
+.rule button:hover {
+  background: #cbd5e1;
+}
+
+.rule-edit {
+  display: grid;
+  gap: 8px;
+}
+
+.rule-edit[hidden] {
+  display: none;
+}
+
+.rule-view {
+  display: grid;
+  gap: 2px;
+}
+
+.rule-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  max-width: 420px;
+  padding-bottom: 4px;
+  width: 100%;
+  padding-right: 10px;
+  padding-left: 2px;
+  box-sizing: border-box;
+}
+
+.rule-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 110px;
+}
+
+.rule-actions button {
+  flex: 1;
+  padding: 8px;
+  font-size: 12px;
+}
+
+.rule-edit {
+  display: grid;
+  gap: 8px;
+}
+
+.rule-edit[hidden] {
+  display: none;
+}
+
+.rule-edit-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.rule-actions .save {
+  background: #16a34a;
+}
+
+.rule-actions .save:hover {
+  background: #15803d;
+}
+
+.rule-actions .delete {
+  background: #e11d48;
+  color: #fff;
+}
+
+.rule-actions .delete:hover {
+  background: #be123c;
+}
+
+.rule-actions .edit {
+  background: #2563eb;
+  color: #fff;
+}
+
+.rule-actions .edit:hover {
+  background: #1d4ed8;
+}
+
+.rule-edit-actions .cancel {
+  background: #e2e8f0;
+  color: #0f172a;
+}
