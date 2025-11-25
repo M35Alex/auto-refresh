@@ -20,10 +20,10 @@ const setRules = async (rules) => {
 };
 
 const getDefaultIntervalMinutes = async () => {
-  const stored = await chrome.storage.sync.get(DEFAULT_INTERVAL_KEY);
+  const stored = await api.storage.sync.get(DEFAULT_INTERVAL_KEY);
   const value = parseFloat(stored[DEFAULT_INTERVAL_KEY]);
   if (!Number.isFinite(value) || value <= 0) {
-    await chrome.storage.sync.set({ [DEFAULT_INTERVAL_KEY]: DEFAULT_INTERVAL_MIN });
+    await api.storage.sync.set({ [DEFAULT_INTERVAL_KEY]: DEFAULT_INTERVAL_MIN });
     return DEFAULT_INTERVAL_MIN;
   }
   return value;
@@ -204,7 +204,7 @@ api.alarms.onAlarm.addListener(async (alarm) => {
   }
   if (alarm.name.startsWith(ALARM_PREFIX)) {
     // Legacy alarms no longer used; clear if present
-    await chrome.alarms.clear(alarm.name);
+    await api.alarms.clear(alarm.name);
   }
 });
 

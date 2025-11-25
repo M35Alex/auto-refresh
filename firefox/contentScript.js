@@ -1,6 +1,9 @@
 const SHORTCUT_KEY = 'autoRefreshShortcut';
 const DEFAULT_SHORTCUT = 'alt+shift+r';
 const BASE_SHORTCUT = 'alt+r';
+const RULES_KEY = 'autoRefreshRules';
+const DEFAULT_INTERVAL_KEY = 'autoRefreshDefaultInterval';
+const DEFAULT_INTERVAL_MINUTES = 60;
 
 const state = {
   shortcut: DEFAULT_SHORTCUT,
@@ -10,6 +13,56 @@ const state = {
 const loadShortcut = async () => {
   const stored = await (typeof browser !== 'undefined' ? browser.storage.sync.get(SHORTCUT_KEY) : chrome.storage.sync.get(SHORTCUT_KEY));
   state.shortcut = (stored[SHORTCUT_KEY] || DEFAULT_SHORTCUT).toLowerCase();
+};
+
+const readDefaultInterval = async () => {
+  const stored = await (typeof browser !== 'undefined' ? browser.storage.sync.get(DEFAULT_INTERVAL_KEY) : chrome.storage.sync.get(DEFAULT_INTERVAL_KEY));
+  const value = parseFloat(stored[DEFAULT_INTERVAL_KEY]);
+  if (!Number.isFinite(value) || value <= 0) return DEFAULT_INTERVAL_MINUTES;
+  return value;
+};
+
+const normalizeBaseUrl = (value) => {
+  if (!value) return '';
+  try {
+    const { origin, pathname } = new URL(value);
+    const path = pathname.endsWith('/') ? pathname : `${pathname}/`;
+    return `${origin}${path}`;
+  } catch (e) {
+    return '';
+  }
+};
+
+const normalizeOrigin = (value) => {
+  if (!value) return '';
+  try {
+    const { origin } = new URL(value);
+    return `${origin}/`;
+  } catch (e) {
+    return '';
+  }
+};
+
+const toggleRuleLocally = async (url, mode = 'full') => {
+  const baseUrl = mode === 'base' ? normalizeOrigin(url) : normalizeBaseUrl(url);
+  if (!baseUrl) return { ok: false };
+  const api = typeof browser !== 'undefined' ? browser : chrome;
+  const stored = await api.storage.sync.get(RULES_KEY);
+  const rules = stored[RULES_KEY] || [];
+  const existing = rules.find((r) => r.baseUrl === baseUrl);
+  const defaultInterval = await readDefaultInterval();
+  const nextRules = existing
+    ? rules.filter((r) => r.id !== existing.id)
+    : [
+        ...rules,
+        {
+          id: existing?.id || (crypto.randomUUID?.() || String(Date.now())),
+          baseUrl,
+          intervalMinutes: defaultInterval,
+        },
+      ];
+  await api.storage.sync.set({ [RULES_KEY]: nextRules });
+  return { ok: true, added: !existing };
 };
 
 const parseShortcut = (shortcut) => {
@@ -47,13 +100,27 @@ const shouldIgnoreTarget = (target) => {
 const handleKeydown = async (event) => {
   if (shouldIgnoreTarget(event.target)) return;
   if (matchesShortcut(event, state.shortcut)) {
-    alert(`Full URL shortcut for ${window.location.href}`);
-  (typeof browser !== 'undefined' ? browser.runtime.sendMessage : chrome.runtime.sendMessage)({ type: 'shortcutTriggered', url: window.location.href, mode: 'full' });
+    try {
+      await (typeof browser !== 'undefined' ? browser.runtime.sendMessage : chrome.runtime.sendMessage)({
+        type: 'shortcutTriggered',
+        url: window.location.href,
+        mode: 'full',
+      });
+    } catch (e) {
+      await toggleRuleLocally(window.location.href, 'full');
+    }
     return;
   }
   if (matchesShortcut(event, state.baseShortcut)) {
-    alert(`Base URL shortcut for ${window.location.href}`);
-    (typeof browser !== 'undefined' ? browser.runtime.sendMessage : chrome.runtime.sendMessage)({ type: 'shortcutTriggered', url: window.location.href, mode: 'base' });
+    try {
+      await (typeof browser !== 'undefined' ? browser.runtime.sendMessage : chrome.runtime.sendMessage)({
+        type: 'shortcutTriggered',
+        url: window.location.href,
+        mode: 'base',
+      });
+    } catch (e) {
+      await toggleRuleLocally(window.location.href, 'base');
+    }
   }
 };
 
